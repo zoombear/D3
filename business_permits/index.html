@@ -72,14 +72,20 @@ var x = d3.scale.ordinal()
 var y = d3.scale.linear()
     .range([height, 0]);
 
+var color = d3.scale.category10();
+
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom");
+    .orient("bottom")
+    .ticks(d3.time.format("%Y-%m-%d"));
 
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
     .ticks(10, "");
+
+// var eleven = if index -1 = 1 then select
+// phrase.charCodeAt(i)
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -87,9 +93,21 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json", function(error, data) {
+d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", function(error, data) {
   x.domain(data.map(function(d) { return d.week; }));
   y.domain([0, d3.max(data, function(d) { return d.average_days_to_permit; })]);
+
+
+
+
+  // var avgDays = d3.keys(data[0]).filter(function(key) { return key !== "average_days_to_permit"; });
+
+  // data.forEach(function(d) {
+  //   d.dayz = avgDays.map(function(name) { return {name: name, value: +d[name]}; });
+  // });
+
+  // x.domain(data.map(function(d) { return d.week; }));
+  // y.domain([0, d3.max(data, function(d) { return d3.max(d.dayz, function(d) { return d.value; }); })]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -106,7 +124,7 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json", function(error,
       .style("text-anchor", "end")
       .text("average days to permit");
 
-  svg.selectAll(".bar")
+    svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
@@ -116,6 +134,81 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json", function(error,
       .attr("height", function(d) { return height - y(d.average_days_to_permit); });
 
 });
+
+
+      // //On click, update with new data      
+      // d3.selectAll(".m")
+      //   .on("click", function() {
+      //     var date = this.getAttribute("value");
+
+      //     var str;
+      //     if(date == "2011"){
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=31";
+      //     }else if(date == "2012"){
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=53&$offset=31";
+      //     }else if(date == "2013"){
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=52&$offset=84";
+      //     }else if(date == "2014"){
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$offset=136";
+      //     }else{
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json";
+      //     }
+
+      //     d3.json(str,function(error, data) {
+        // dataset = data;
+        // stack(dataset);
+
+        // console.log(dataset);
+
+        // xScale.domain([new Date(0, 0, 0,dataset[0][0].time,0, 0, 0),new Date(0, 0, 0,dataset[0][dataset[0].length-1].time,0, 0, 0)])
+        //     .rangeRound([0, w-padding.left-padding.right]);
+
+        // yScale.domain([0,       
+        //             d3.max(dataset, function(d) {
+        //               return d3.max(d, function(d) {
+        //                 return d.y0 + d.y;
+        //               });
+        //             })
+        //           ])
+        //           .range([h-padding.bottom-padding.top,0]);
+
+        // xAxis.scale(xScale)
+        //          .ticks(d3.time.hour,2)
+        //          .tickFormat(d3.time.format("%H"));
+
+        // yAxis.scale(yScale)
+        //          .orient("left")
+        //          .ticks(10);
+
+
+
+
+
+
+
+
+
+
+
+
+
+//   var group = svg.selectAll(".week")
+//       .data(data)
+//     .enter().append("g")
+//       .attr("class", "g")
+//       .attr("tranform", function(d) { return "translate(" + x(d.week) + ",0"; });
+
+//   group.selectAll("rect")
+//       .data(function(d) { return d.dayz; })
+//     .enter().append("rect")
+//       .attr("width", x.rangeBand())
+//       .attr("x", function(d) { return x(d.week); })
+//       .attr("width", x.rangeBand())
+//       .attr("y", function(d) { return y(d.value); })
+//       .attr("height", function(d) { return height - y(d.value); })
+//       .style("fill", function(d) { return color(d.name); });
+
+// });
 
 function type(d) {
   d.average_days_to_permit = +d.average_days_to_permit;
