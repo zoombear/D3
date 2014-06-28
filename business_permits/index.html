@@ -19,7 +19,7 @@
 }
 
 .axis {
-  font: 8px sans-serif;
+  font: 12px sans-serif;
 }
 
 .axis path,
@@ -36,7 +36,7 @@
     </style>
   <head>
 <center>
-  The Developer Services Review Program is designed to meet the special needs of owners, developers, architects and contractors working on moderately- to highly-complex construction or renovation projects. Eligible projects include high-rise buildings, mercantile buildings with more than 150,000 square feet, other occupancies with more than 80,000 square feet, buildings with foundations deeper than 12 feet, and residential projects that contain more than 25 units. This metric tracks the average number of days DOB takes to process individual Developer Services Permits, grouped by the week the permit was processed. The target average process time is within 89 days.
+  The Developer Services Review Program is designed to meet the special needs of owners, developers, architects and contractors working on moderately- to highly-complex construction or renovation projects. Eligible projects include high-rise buildings, mercantile buildings with more than 150,000 square feet, other occupancies with more than 80,000 square feet, buildings with foundations deeper than 12 feet, and residential projects that contain more than 25 units. This metric tracks the average number of days DOB takes to process individual Developer Services Permits, grouped by the week_text the permit was processed. The target average process time is within 89 days.
 </center>
 <br/>
 <center>
@@ -62,9 +62,12 @@
 
     <script>
 
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 1060 - margin.left - margin.right,
+var margin = {top: 70, right: 20, bottom: 50, left: 40},
+    width = 1160 - margin.left - margin.right,
     height = 550 - margin.top - margin.bottom;
+var dataset;
+
+var stack = d3.layout.stack();
 
 var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1);
@@ -76,8 +79,7 @@ var color = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom")
-    .ticks(d3.time.format("%Y-%m-%d"));
+    .orient("bottom");
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -92,12 +94,13 @@ var svg = d3.select("body").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", function(error, data) {
 
-d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", function(error, data) {
-  x.domain(data.map(function(d) { return d.week; }));
+d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=31", function(error, data) {
+  x.domain(data.map(function(d) { return d.week_text; }));
   y.domain([0, d3.max(data, function(d) { return d.average_days_to_permit; })]);
 
-
+//d.week_text = d.week_text.substr(0, 9)
 
 
   // var avgDays = d3.keys(data[0]).filter(function(key) { return key !== "average_days_to_permit"; });
@@ -106,13 +109,18 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", functi
   //   d.dayz = avgDays.map(function(name) { return {name: name, value: +d[name]}; });
   // });
 
-  // x.domain(data.map(function(d) { return d.week; }));
+  // x.domain(data.map(function(d) { return d.week_text; }));
   // y.domain([0, d3.max(data, function(d) { return d3.max(d.dayz, function(d) { return d.value; }); })]);
 
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .call(xAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-45)");
 
   svg.append("g")
       .attr("class", "y axis")
@@ -128,7 +136,7 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", functi
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.week); })
+      .attr("x", function(d) { return x(d.week_text); })
       .attr("width", x.rangeBand())
       .attr("y", function(d) { return y(d.average_days_to_permit); })
       .attr("height", function(d) { return height - y(d.average_days_to_permit); });
@@ -152,9 +160,9 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", functi
       //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$offset=136";
       //     }else{
       //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json";
-      //     }
+      //     })
 
-      //     d3.json(str,function(error, data) {
+        //   d3.json(str,function(error, data) {
         // dataset = data;
         // stack(dataset);
 
@@ -184,25 +192,17 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", functi
 
 
 
-
-
-
-
-
-
-
-
-//   var group = svg.selectAll(".week")
+//   var group = svg.selectAll(".week_text")
 //       .data(data)
 //     .enter().append("g")
 //       .attr("class", "g")
-//       .attr("tranform", function(d) { return "translate(" + x(d.week) + ",0"; });
+//       .attr("tranform", function(d) { return "translate(" + x(d.week_text) + ",0"; });
 
 //   group.selectAll("rect")
 //       .data(function(d) { return d.dayz; })
 //     .enter().append("rect")
 //       .attr("width", x.rangeBand())
-//       .attr("x", function(d) { return x(d.week); })
+//       .attr("x", function(d) { return x(d.week_text); })
 //       .attr("width", x.rangeBand())
 //       .attr("y", function(d) { return y(d.value); })
 //       .attr("height", function(d) { return height - y(d.value); })
