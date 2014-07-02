@@ -38,7 +38,7 @@
 <center>
   The Developer Services Review Program is designed to meet the special needs of owners, developers, architects and contractors working on moderately- to highly-complex construction or renovation projects. Eligible projects include high-rise buildings, mercantile buildings with more than 150,000 square feet, other occupancies with more than 80,000 square feet, buildings with foundations deeper than 12 feet, and residential projects that contain more than 25 units. This metric tracks the average number of days DOB takes to process individual Developer Services Permits, grouped by the week_text the permit was processed. The target average process time is within 89 days.
 </center>
-<br/>
+</br>
 <center>
 <a href="https://data.cityofchicago.org/Administration-Finance/Performance-Metrics-Buildings-Time-to-Issue-Develo/ijdy-a94t">Click here for City of Chicago data</a>
 </center>
@@ -53,10 +53,10 @@
                Permits per Year <span class="caret"></span>
         </button>
           <ul class="dropdown-menu" role="menu">
-            <li><a class="m" value="2011" href="#">2011</a></li>
-            <li><a class="m" value="2012" href="#">2012</a></li>
-            <li><a class="m" value="2013" href="#">2013</a></li>
-            <li><a class="m" value="2014" href="#">2014</a></li>
+            <li><a class="m" value="2011" href="#" onclick="data1();return false;">2011</a></li>
+            <li><a class="m" value="2012" href="#" onclick="data2();return false;">2012</a></li>
+            <li><a class="m" value="2013" href="#" onclick="data3();return false;">2013</a></li>
+            <li><a class="m" value="2014" href="#" onclick="data4();return false;">2014</a></li>
           </ul>
       </div>
 
@@ -95,22 +95,17 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 //d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=5", function(error, data) {
+function type(d) {
+  d.average_days_to_permit = +d.average_days_to_permit;
+  return d;
+}
 
+
+function data1()
+{
 d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=31", function(error, data) {
   x.domain(data.map(function(d) { return d.week_text; }));
   y.domain([0, d3.max(data, function(d) { return d.average_days_to_permit; })]);
-
-//d.week_text = d.week_text.substr(0, 9)
-
-
-  // var avgDays = d3.keys(data[0]).filter(function(key) { return key !== "average_days_to_permit"; });
-
-  // data.forEach(function(d) {
-  //   d.dayz = avgDays.map(function(name) { return {name: name, value: +d[name]}; });
-  // });
-
-  // x.domain(data.map(function(d) { return d.week_text; }));
-  // y.domain([0, d3.max(data, function(d) { return d3.max(d.dayz, function(d) { return d.value; }); })]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -141,7 +136,212 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=31", funct
       .attr("y", function(d) { return y(d.average_days_to_permit); })
       .attr("height", function(d) { return height - y(d.average_days_to_permit); });
 
-});
+      var refreshGraph = function() {
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.week_text); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.average_days_to_permit); })
+      .attr("height", function(d) { return height - y(d.average_days_to_permit); })};
+
+    svg.selectAll("rect")
+      .data(dataset)
+      .enter()
+      .append("rect")
+      .attr("x", function(d, i) {
+      return xScale(i);         // <-- Set x values
+   })
+
+});}
+
+function data2()
+{
+d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=53&$offset=31", function(error, data) {
+  x.domain(data.map(function(d) { return d.week_text; }));
+  y.domain([0, d3.max(data, function(d) { return d.average_days_to_permit; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-45)");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("average days to permit");
+
+    svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.week_text); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.average_days_to_permit); })
+      .attr("height", function(d) { return height - y(d.average_days_to_permit); });
+
+      var refreshGraph = function() {
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.week_text); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.average_days_to_permit); })
+      .attr("height", function(d) { return height - y(d.average_days_to_permit); })};
+
+    svg.selectAll("rect")
+      .data(dataset)
+      .enter()
+      .append("rect")
+      .attr("x", function(d, i) {
+      return xScale(i);         // <-- Set x values
+   })
+
+});}
+
+function data3()
+{
+d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=52&$offset=84", function(error, data) {
+  x.domain(data.map(function(d) { return d.week_text; }));
+  y.domain([0, d3.max(data, function(d) { return d.average_days_to_permit; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-45)");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("average days to permit");
+
+    svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.week_text); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.average_days_to_permit); })
+      .attr("height", function(d) { return height - y(d.average_days_to_permit); });
+
+      var refreshGraph = function() {
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.week_text); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.average_days_to_permit); })
+      .attr("height", function(d) { return height - y(d.average_days_to_permit); })};
+
+    svg.selectAll("rect")
+      .data(dataset)
+      .enter()
+      .append("rect")
+      .attr("x", function(d, i) {
+      return xScale(i);         // <-- Set x values
+   })
+
+});}
+
+function data4()
+{
+d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$offset=136", function(error, data) {
+  x.domain(data.map(function(d) { return d.week_text; }));
+  y.domain([0, d3.max(data, function(d) { return d.average_days_to_permit; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-45)");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("average days to permit");
+
+    svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.week_text); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.average_days_to_permit); })
+      .attr("height", function(d) { return height - y(d.average_days_to_permit); });
+
+      var refreshGraph = function() {
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.week_text); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.average_days_to_permit); })
+      .attr("height", function(d) { return height - y(d.average_days_to_permit); })};
+
+    svg.selectAll("rect")
+      .data(dataset)
+      .enter()
+      .append("rect")
+      .attr("x", function(d, i) {
+      return xScale(i);         // <-- Set x values
+   })
+
+});}
+
+
+      // // //On click, update with new data      
+      // d3.selectAll(".m")
+      //   .on("click", function() {
+      //     var date = this.getAttribute("value");
+
+      //     var str;
+      //     if(date == "2011"){
+      //       data1();
+      //       refreshGraph();
+      //     }else if(date == "2012"){
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=53&$offset=31";
+      //     }else if(date == "2013"){
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=52&$offset=84";
+      //     }else if(date == "2014"){
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json?$offset=136";
+      //     }else{
+      //       str = "http://data.cityofchicago.org/resource/ijdy-a94t.json";
+      //     };
+
+// data4();
 
 
       // //On click, update with new data      
@@ -210,9 +410,6 @@ d3.json("http://data.cityofchicago.org/resource/ijdy-a94t.json?$limit=31", funct
 
 // });
 
-function type(d) {
-  d.average_days_to_permit = +d.average_days_to_permit;
-  return d;
-}
+
 
 </script>
